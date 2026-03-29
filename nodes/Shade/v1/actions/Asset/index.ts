@@ -743,7 +743,6 @@ export async function execute(
 		});
 
 		return {
-			status: 'Success',
 			path: finalPath,
 			name: fileName,
 		};
