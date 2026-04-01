@@ -692,7 +692,7 @@ export async function execute(
 
 		return await apiRequest.call(
 			this,
-			'POST',
+			'PUT',
 			`assets/${assetId}/metadata/${metadataAttribute}/value`,
 			{
 				metadata_attribute_value: value,
