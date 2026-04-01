@@ -1,5 +1,6 @@
 import { INodeProperties, IExecuteFunctions, IDataObject, IHttpRequestOptions } from 'n8n-workflow';
 import { apiRequest } from '../../transport';
+import { checkDrivePrefix } from '../../methods/utils';
 
 // Resource description - defines the UI for Folder operations
 export const description: INodeProperties[] = [
@@ -150,7 +151,7 @@ export const description: INodeProperties[] = [
 		},
 		default: '',
 		placeholder: '/drive123/path/to/my/folder',
-		description: 'Path to the parent folder on which to perform the operation. Drive ID should be prepended.',
+		description: 'Path to the parent folder on which to perform the operation',
 	},
 
 	//Fields for Share
@@ -240,8 +241,9 @@ export async function execute(
 
 	if (operation === 'create') {
 		const folderName = this.getNodeParameter('folderName', index) as string;
-		const path = this.getNodeParameter('path', index) as string;
+		const basePath = this.getNodeParameter('path', index) as string;
 
+		const path = checkDrivePrefix(basePath, driveId);
 		await apiRequest.call(
 			this,
 			'POST',
@@ -261,7 +263,8 @@ export async function execute(
 	}
 
 	if (operation === 'get_shares') {
-		const path = this.getNodeParameter('path', index) as string;
+		const basePath = this.getNodeParameter('path', index) as string;
+		const path = checkDrivePrefix(basePath, driveId);
 
 		return await apiRequest.call(
 			this,
@@ -308,9 +311,11 @@ export async function execute(
 
 	if (operation === 'share') {
 		const name = this.getNodeParameter('name', index) as string;
-		const path = this.getNodeParameter('path', index) as string;
+		const basePath = this.getNodeParameter('path', index) as string;
 		const allowedActions = this.getNodeParameter('allowedActions', index) as string[];
 		const publicEnabled = this.getNodeParameter('publicEnabled', index) as boolean;
+
+		const path = checkDrivePrefix(basePath, driveId);
 
 		return await apiRequest.call(
 			this,

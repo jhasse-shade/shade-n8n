@@ -1,5 +1,6 @@
 import { INodeProperties, IExecuteFunctions, IDataObject,  } from 'n8n-workflow';
 import { apiRequest } from '../../transport';
+import { checkDrivePrefix } from '../../methods/utils';
 
 // Resource description - defines the UI for Asset operations
 export const description: INodeProperties[] = [
@@ -212,7 +213,7 @@ export const description: INodeProperties[] = [
 		},
 		default: '',
 		placeholder: '/my-folder',
-		description: 'Path to operate in (Drive ID should be prepended)',
+		description: 'Path to operate in',
 	},
 	{
 		displayName: 'File Name',
@@ -612,7 +613,8 @@ export async function execute(
 
 
 	if (operation === "get_shares") {
-		const path = this.getNodeParameter('path', index) as string;
+		const basePath = this.getNodeParameter('path', index) as string;
+		const path = checkDrivePrefix(basePath, driveId);
 
 		return await apiRequest.call(
 			this,
@@ -664,9 +666,11 @@ export async function execute(
 
 	if (operation === "share") {
 		const name = this.getNodeParameter('name', index) as string;
-		const path = this.getNodeParameter('path', index) as string;
+		const basePath = this.getNodeParameter('path', index) as string;
 		const allowedActions = this.getNodeParameter('allowedActions', index) as string[];
 		const publicEnabled = this.getNodeParameter('publicEnabled', index) as boolean;
+
+		const path = checkDrivePrefix(basePath, driveId);
 
 		return await apiRequest.call(
 			this,
@@ -738,6 +742,7 @@ export async function execute(
 		// 2) Prepare multipart upload
 		const PART_SIZE = 5 * 1024 * 1024; // 5MB
 
+		//take an upload path that may or may not have the driveId prefix, strip it out, and return a clean path with the filename appended
 		const parts = uploadPath.replace(/^\/+/, '').split('/');
 		const normalizedParts = parts[0] === driveId ? parts.slice(1) : parts;
 		const normalizedFolder = normalizedParts.join('/');
