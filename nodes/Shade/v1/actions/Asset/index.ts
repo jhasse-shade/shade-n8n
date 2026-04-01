@@ -683,17 +683,23 @@ export async function execute(
 
 	if (operation === 'update') {
 		const assetId = this.getNodeParameter('assetId', index) as string;
-		const metadataAttribute = this.getNodeParameter('metadataAttribute', index) as string;
+		const metadataAttribute = this.getNodeParameter('metadataAttribute', index) as string | { value: string };
+
+		const metadataAttributeOption =
+			typeof metadataAttribute === 'object'
+				? metadataAttribute.value
+				: metadataAttribute;
+
 		let value = this.getNodeParameter('value', index) as string;
 
-		if (value == null) {
+		if (value == "") {
 			value = this.getNodeParameter('metadataAttributeOption', index) as string;
 		}
 
 		return await apiRequest.call(
 			this,
 			'PUT',
-			`assets/${assetId}/metadata/${metadataAttribute}/value`,
+			`assets/${assetId}/metadata/${metadataAttributeOption}/value`,
 			{
 				metadata_attribute_value: value,
 				drive_id: driveId,
