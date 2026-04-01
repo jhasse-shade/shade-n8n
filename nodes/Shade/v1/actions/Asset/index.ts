@@ -80,7 +80,7 @@ export const description: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['asset'],
-				operation: ['upload', 'update', 'search', 'share', 'get_shares'],
+				operation: ['upload', 'update', 'search', 'get', 'share', 'get_shares', 'get_transcription', 'comment', 'get_comments'],
 			},
 		},
 		modes: [
@@ -154,6 +154,53 @@ export const description: INodeProperties[] = [
 		description: 'The drive to work with',
 	},
 	{
+		displayName: 'Get By',
+		name: 'getBy',
+		type: 'options',
+		displayOptions: {
+			show: {
+				resource: ['asset'],
+				operation: ['get'],
+			},
+		},
+		options: [
+			{ name: 'ID', value: 'id' },
+			{ name: 'Path', value: 'path' },
+		],
+		default: 'id',
+		noDataExpression: true,
+	},
+	{
+		displayName: 'Asset ID',
+		name: 'assetId',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['asset'],
+				operation: ['get'],
+				getBy: ['id'],
+			},
+		},
+		default: '',
+		placeholder: 'asset-123',
+	},
+	{
+		displayName: 'Path',
+		name: 'assetPath',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['asset'],
+				operation: ['get'],
+				getBy: ['path'],
+			},
+		},
+		default: '',
+		placeholder: '/my-folder/file.mp4',
+	},
+	{
 		displayName: 'Path',
 		name: 'path',
 		type: 'string',
@@ -206,7 +253,7 @@ export const description: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['asset'],
-				operation: ['update', 'get', 'comment', 'get_comments', 'get_transcription'],
+				operation: ['update', 'comment', 'get_comments', 'get_transcription'],
 			},
 		},
 		default: '',
@@ -261,7 +308,7 @@ export const description: INodeProperties[] = [
 		type: 'multiOptions',
 		typeOptions: {
 			loadOptionsMethod: 'metadataOptionSearch',
-			loadOptionsDependsOn: ['metadataAttribute'],
+			loadOptionsDependsOn: ['metadataAttribute.value', 'drive.value'],
 		},
 		default: [],
 		displayOptions: {
@@ -515,9 +562,23 @@ export async function execute(
 		)
 	}
 
-
-
 	if (operation === "get") {
+		const getBy = this.getNodeParameter('getBy', index) as string;
+
+		if (getBy === 'path') {
+			const assetPath = this.getNodeParameter('assetPath', index) as string;
+
+			return await apiRequest.call(
+				this,
+				'GET',
+				`assets/path`,
+				{},
+				{
+					drive_id: driveId,
+					path: assetPath,
+				}
+			);
+		}
 
 		const assetId = this.getNodeParameter('assetId', index) as string;
 
@@ -743,7 +804,7 @@ export async function execute(
 		});
 
 		return {
-			path: finalPath,
+			path: `/${driveId}` + finalPath,
 			name: fileName,
 		};
 	}

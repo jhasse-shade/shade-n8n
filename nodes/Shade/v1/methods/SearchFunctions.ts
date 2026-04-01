@@ -93,16 +93,26 @@ export async function metadataOptionSearch(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
 
+	console.log("TEST");
+
 	const selectedDrive = this.getNodeParameter("drive", null, {extractValue: true});
 	const selectedAttribute = this.getNodeParameter("metadataAttribute", null, {extractValue: true});
 
-	if (selectedDrive == null) {
-		return []
+	console.log(selectedAttribute);
+	console.log(selectedDrive);
+	console.log(selectedAttribute === "");
+	console.log(selectedDrive === "");
+	console.log("pog");
+
+	if (!selectedDrive || !selectedAttribute) {
+		return [];
 	}
 	const resp: ShadeMetadataItem[] = await apiRequest.call(this, "GET", `workspaces/drives/${selectedDrive}/metadata`);
 
 	for (const attribute of resp) {
 		if (attribute.id == selectedAttribute) {
+
+			console.log(attribute);
 
 			if ((attribute.value_type !== "single_select" && attribute.value_type !== "multi_select") || attribute.options == null) {
 				return []
