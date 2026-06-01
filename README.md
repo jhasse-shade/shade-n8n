@@ -49,7 +49,7 @@ This walkthrough shows how to upload a file from your local machine into a Shade
 2. **Shade node — Asset › Upload**
    - **Workspace**: select your workspace from the list (or paste its ID).
    - **Drive**: select the target drive from the list (or paste its ID).
-   - **Path**: the folder path inside the drive to upload into, e.g. `/reports`. Leave blank to upload to the drive root. You do not need to prepend the drive ID — the node handles that automatically.
+   - **Path**: the folder path inside the drive to upload into, e.g. `/reports`. Leave blank to upload to the drive root. 
    - **File Name**: the name the file should have in Shade, e.g. `q1.pdf`.
    - **Binary Property**: the name of the binary field carrying the file — `data` if you used a Read Binary File node with default settings.
 
