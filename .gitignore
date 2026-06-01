@@ -1,6 +1,5 @@
 node_modules
 .vscode
-.github
 .idea
 dist
 package-lock.json

@@ -1,4 +1,4 @@
-import { INodeProperties, IExecuteFunctions, IDataObject,  } from 'n8n-workflow';
+import { INodeProperties, IExecuteFunctions, IDataObject, NodeApiError, NodeOperationError, type JsonObject } from 'n8n-workflow';
 import { apiRequest } from '../../transport';
 import { checkDrivePrefix } from '../../methods/utils';
 
@@ -528,7 +528,7 @@ async function uploadPartToPresignedUrl(
 
 	const etag = response.headers['etag'];
 	if (!etag) {
-		throw new Error('No ETag returned from presigned URL upload');
+		throw new NodeApiError(context.getNode(), response as unknown as JsonObject, { message: 'No ETag returned from presigned URL upload' });
 	}
 
 	return etag;
@@ -722,7 +722,7 @@ export async function execute(
 		const binaryData = items[index].binary;
 
 		if (!binaryData || !binaryData[binaryPropertyName]) {
-			throw new Error(`No binary data found in property: ${binaryPropertyName}`);
+			throw new NodeOperationError(this.getNode(), `No binary data found in property: ${binaryPropertyName}`, { itemIndex: index });
 		}
 
 		const fileBuffer = await this.helpers.getBinaryDataBuffer(index, binaryPropertyName);
@@ -821,7 +821,7 @@ export async function execute(
 	}
 
 
-	throw new Error(`Unknown operation: ${operation}`);
+	throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, { itemIndex: index });
 }
 
 

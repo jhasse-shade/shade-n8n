@@ -1,4 +1,4 @@
-import { INodeProperties, IExecuteFunctions, IDataObject, IHttpRequestOptions } from 'n8n-workflow';
+import { INodeProperties, IExecuteFunctions, IDataObject, IHttpRequestOptions, NodeOperationError } from 'n8n-workflow';
 import { apiRequest } from '../../transport';
 import { checkDrivePrefix } from '../../methods/utils';
 
@@ -331,5 +331,5 @@ export async function execute(
 	}
 
 
-	throw new Error(`Unknown operation: ${operation}`);
+	throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, { itemIndex: index });
 }

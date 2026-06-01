@@ -1,7 +1,10 @@
 import {
 	NodeConnectionTypes,
+	NodeApiError,
+	NodeOperationError,
 	type INodeType,
 	type INodeTypeDescription,
+	type JsonObject,
 	INodeExecutionData,
 	IExecuteFunctions,
 	INodeTypeBaseDescription,
@@ -28,13 +31,6 @@ const versionDescription: INodeTypeDescription = {
 	inputs: [NodeConnectionTypes.Main],
 	outputs: [NodeConnectionTypes.Main],
 	credentials: [{ name: 'shadeApi', required: true }],
-	requestDefaults: {
-		baseURL: 'https://api.shade.inc',
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
-	},
 	properties: [
 		{
 			displayName: 'Resource',
@@ -120,7 +116,10 @@ export class ShadeV1 implements INodeType {
 					});
 					continue;
 				}
-				throw error;
+				if (error instanceof NodeOperationError || error instanceof NodeApiError) {
+					throw error;
+				}
+				throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
 			}
 		}
 
