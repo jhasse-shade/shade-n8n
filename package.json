@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-shade",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Interact with your shade workspace via the api",
   "license": "MIT",
   "homepage": "https://github.com/jhasse-shade/shade-n8n/tree/main",

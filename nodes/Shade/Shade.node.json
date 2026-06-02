@@ -1,17 +1,17 @@
 {
-	"node": "n8n-nodes-base.Shade",
+	"node": "n8n-nodes-shade.shade",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Development", "Developer Tools"],
+	"categories": ["Development", "Data & Storage"],
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "https://github.com/org/repo?tab=readme-ov-file#credentials"
+				"url": "https://github.com/jhasse-shade/shade-n8n?tab=readme-ov-file#credentials"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/org/repo?tab=readme-ov-file"
+				"url": "https://github.com/jhasse-shade/shade-n8n?tab=readme-ov-file"
 			}
 		]
 	}
